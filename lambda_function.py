@@ -2,7 +2,7 @@ import json
 import requests
 import pandas as pd
 
-def handler_function(event,context):
+def handler_handler(event,context):
     print("Event data -> ",event)
     response = requests.get("https://www.google.com/")
     print(response.text)

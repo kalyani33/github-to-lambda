@@ -1,2 +1,2 @@
 # github-to-lambda
-# changing aws codebuild
+# changing aws codebuild deployment

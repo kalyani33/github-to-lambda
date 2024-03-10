@@ -1,13 +1,26 @@
 import json
-import requests
 import pandas as pd
 
-def lambda_handler(event,context):
-    print("Event data -> ",event)
-    response = requests.get("https://www.google.com/")
-    print(response.text)
-
-    d = {'col1':[1,2],'col2':[3,4]}
-    df = pd.DataFrame(data=d)
+def lambda_handler(event, context):
+    bucket_name = event["Records"][0]["s3"]["bucket"]["name"]
+    s3_file_name = event["Records"][0]["s3"]["object"]["key"]
+    print('Bucket Name:' + bucket_name)
+    print('S3 File Name:' + s3_file_name)
+  
+    json_file = 's3://' + bucket_name + '/' + s3_file_name
+    print('JSON File:' + json_file)
+    
+    #data_frame = wr.s3.read_json(path=json_file, orient='records', lines=True)
+    df = pd.read_json(json_file,lines=True,orient='records')
+    #print(df)
+    df = df[df['status'] == 'delivered']
     print(df)
-    print("Done !!!")
+    
+    new_s3_file_name = 's3://doordash-target-zn-10' + '/' + s3_file_name
+    
+    df.to_json(path_or_buf=new_s3_file_name,orient='records')
+    print("Output file uploaded to : ",new_s3_file_name)
+    return {
+        'statusCode': 200,
+        'body': json.dumps("Output file uploaded to : {} ".format(new_s3_file_name))
+    }

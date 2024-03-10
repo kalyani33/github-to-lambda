@@ -1,2 +1,3 @@
 pandas
-requests
+fsspec
+s3fs
